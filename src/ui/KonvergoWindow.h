@@ -8,10 +8,13 @@
 class KonvergoWindow : public QQuickWindow
 {
   Q_OBJECT
+
   Q_PROPERTY(bool fullScreen READ isFullScreen WRITE setFullScreen NOTIFY fullScreenSwitched)
   Q_PROPERTY(bool showDebugLayer MEMBER m_debugLayer NOTIFY debugLayerChanged)
   Q_PROPERTY(QString debugInfo MEMBER m_debugInfo NOTIFY debugInfoChanged)
   Q_PROPERTY(QString videoInfo MEMBER m_videoInfo NOTIFY debugInfoChanged)
+  Q_PROPERTY(qreal webScale READ webScale NOTIFY webScaleChanged)
+
 public:
   static void RegisterClass();
 
@@ -43,15 +46,20 @@ public:
     emit reloadWebClient();
   }
 
+  qreal webScale() { return CalculateScale(size()); }
+  static qreal CalculateScale(const QSize& size);
+
 Q_SIGNALS:
   void fullScreenSwitched();
+  void webScaleChanged();
   void enableVideoWindowSignal();
   void debugLayerChanged();
   void debugInfoChanged();
   void reloadWebClient();
 
 protected:
-  virtual void focusOutEvent(QFocusEvent * ev);
+  virtual void focusOutEvent(QFocusEvent* ev) override;
+  virtual void resizeEvent(QResizeEvent* event) override;
 
 private slots:
   void closingWindow();
@@ -68,9 +76,8 @@ private:
   void saveGeometry();
   void loadGeometry();
   QRect loadGeometryRect();
-
-private:
   bool m_debugLayer;
+  qreal m_lastScale;
   QTimer* m_infoTimer;
   QString m_debugInfo, m_systemDebugInfo, m_videoInfo;
 };

@@ -9,17 +9,23 @@ KonvergoWindow
   id: mainWindow
   title: "Plex Media Player"
   objectName: "mainWindow"
-  visible: true
   minimumHeight: 240
   minimumWidth: 426
   height: 720
   width: 1280
 
-  function getMaxHeightArg()
+  function getInitialScaleArg()
   {
-    if (webMaxHeight > 0)
-      return "?maxHeight=" + (webMaxHeight / Screen.devicePixelRatio);
-    return ""
+    return "?initalScale=" + webScale
+  }
+
+  onWebScaleChanged:
+  {
+    if (web.url == "")
+    {
+      console.log("Loading web page")
+      web.url = components.settings.value("path", "startupurl") + getInitialScaleArg();
+    }
   }
 
   MpvVideo
@@ -84,8 +90,6 @@ KonvergoWindow
       backgroundColor : "#111111"
       forceActiveFocus()
       mainWindow.reloadWebClient.connect(reload)
-
-      url = components.settings.value("path", "startupurl") + getMaxHeightArg()
     }
 
     onLoadingChanged:
