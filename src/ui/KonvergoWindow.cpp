@@ -322,11 +322,14 @@ void KonvergoWindow::resizeEvent(QResizeEvent* event)
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////
+#define ROUND(x) (qRound(x * 1000) / 1000.0)
+
+/////////////////////////////////////////////////////////////////////////////////////////
 qreal KonvergoWindow::CalculateScale(const QSize& size)
 {
   qreal horizontalScale = (qreal)size.width() / (qreal)WEBUI_SIZE.width();
   qreal verticalScale = (qreal)size.height() / (qreal)WEBUI_SIZE.height();
-  return qMin(horizontalScale, verticalScale);
+  return ROUND(qMin(horizontalScale, verticalScale));
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////
@@ -336,5 +339,5 @@ qreal KonvergoWindow::CalculateWebScale(const QSize& size, qint32 devicePixelRat
   qreal verticalScale = (qreal)size.height() / (qreal)WEBUI_SIZE.height();
 
   qreal minScale = qMin(horizontalScale, qMin(verticalScale, (qreal)(WEBUI_MAX_HEIGHT / devicePixelRatio) / (qreal)WEBUI_SIZE.height()));
-  return qMax(1.0, minScale);
+  return ROUND(qMax(1.0, minScale));
 }
