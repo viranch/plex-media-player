@@ -208,6 +208,8 @@ void KonvergoWindow::updateFullscreenState()
     setVisibility(QWindow::Windowed);
     loadGeometry();
   }
+  
+  
 }
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////
@@ -223,7 +225,7 @@ void KonvergoWindow::onVisibilityChanged(QWindow::Visibility visibility)
   else if (visibility == QWindow::Windowed)
     PowerComponent::Get().setFullscreenState(false);
 
-  emit webScaleChanged();
+  notifyScale(size());
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////
@@ -298,18 +300,24 @@ void KonvergoWindow::toggleDebug()
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////
-void KonvergoWindow::resizeEvent(QResizeEvent* event)
+void KonvergoWindow::notifyScale(const QSize& size)
 {
-  qreal scale = CalculateScale(event->size());
+  qreal scale = CalculateScale(size);
   if (scale != m_lastScale)
   {
     QLOG_DEBUG() << "windowScale updated to:" << scale;
     m_lastScale = scale;
 
-    emit SystemComponent::Get().scaleChanged(CalculateWebScale(event->size()));
-    emit webScaleChanged();
+    emit SystemComponent::Get().scaleChanged(CalculateWebScale(size, devicePixelRatio()));
   }
+  emit webScaleChanged();
+}
 
+
+/////////////////////////////////////////////////////////////////////////////////////////
+void KonvergoWindow::resizeEvent(QResizeEvent* event)
+{
+  notifyScale(event->size());
   QQuickWindow::resizeEvent(event);
 }
 
@@ -322,11 +330,11 @@ qreal KonvergoWindow::CalculateScale(const QSize& size)
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////
-qreal KonvergoWindow::CalculateWebScale(const QSize& size)
+qreal KonvergoWindow::CalculateWebScale(const QSize& size, qint32 devicePixelRatio)
 {
   qreal horizontalScale = (qreal)size.width() / (qreal)WEBUI_SIZE.width();
   qreal verticalScale = (qreal)size.height() / (qreal)WEBUI_SIZE.height();
 
-  qreal minScale = qMin(horizontalScale, qMin(verticalScale, (qreal)WEBUI_MAX_HEIGHT / (qreal)WEBUI_SIZE.height()));
+  qreal minScale = qMin(horizontalScale, qMin(verticalScale, (qreal)(WEBUI_MAX_HEIGHT / devicePixelRatio) / (qreal)WEBUI_SIZE.height()));
   return qMax(1.0, minScale);
 }

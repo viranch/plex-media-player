@@ -64,11 +64,11 @@ public:
   }
 
   qreal windowScale() { return CalculateScale(size()); }
-  qreal webScale() { return CalculateWebScale(size()); }
+  qreal webScale() { return CalculateWebScale(size(), devicePixelRatio()); }
   qreal webHeightMax() { return WEBUI_MAX_HEIGHT; }
   QSize webUISize() { return WEBUI_SIZE; }
   static qreal CalculateScale(const QSize& size);
-  static qreal CalculateWebScale(const QSize& size);
+  static qreal CalculateWebScale(const QSize& size, qint32 devicePixelRatio);
 
 Q_SIGNALS:
   void fullScreenSwitched();
@@ -94,6 +94,7 @@ private slots:
   void playerPlaybackStarting();
 
 private:
+  void notifyScale(const QSize& size);
   void saveGeometry();
   void loadGeometry();
   QRect loadGeometryRect();
