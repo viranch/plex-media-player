@@ -303,10 +303,10 @@ void KonvergoWindow::resizeEvent(QResizeEvent* event)
   qreal scale = CalculateScale(event->size());
   if (scale != m_lastScale)
   {
-    QLOG_DEBUG() << "webScale updated to:" << scale;
+    QLOG_DEBUG() << "windowScale updated to:" << scale;
     m_lastScale = scale;
 
-    emit SystemComponent::Get().scaleChanged(scale);
+    emit SystemComponent::Get().scaleChanged(CalculateWebScale(event->size()));
     emit webScaleChanged();
   }
 
@@ -315,6 +315,14 @@ void KonvergoWindow::resizeEvent(QResizeEvent* event)
 
 /////////////////////////////////////////////////////////////////////////////////////////
 qreal KonvergoWindow::CalculateScale(const QSize& size)
+{
+  qreal horizontalScale = (qreal)size.width() / (qreal)WEBUI_SIZE.width();
+  qreal verticalScale = (qreal)size.height() / (qreal)WEBUI_SIZE.height();
+  return qMin(horizontalScale, verticalScale);
+}
+
+/////////////////////////////////////////////////////////////////////////////////////////
+qreal KonvergoWindow::CalculateWebScale(const QSize& size)
 {
   qreal horizontalScale = (qreal)size.width() / (qreal)WEBUI_SIZE.width();
   qreal verticalScale = (qreal)size.height() / (qreal)WEBUI_SIZE.height();

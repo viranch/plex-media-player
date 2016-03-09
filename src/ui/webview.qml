@@ -55,21 +55,21 @@ KonvergoWindow
     {
       var maximumScale = webHeightMax ? ((webHeightMax / Screen.devicePixelRatio) / 720) : 10;
 
-      if (webScale < maximumScale) {
+      if (mainWindow.windowScale < maximumScale) {
         // Web renders at windows scale, no scaling
         return 1;
       } else {
         // Web should max out at maximum scaling
-        return webScale / maximumScale;
+        return mainWindow.windowScale / maximumScale;
       }
     }
 
     zoomFactor:
     {
-      if (webScale < 1)
-        return webScale;
+      if (mainWindow.windowScale < 1)
+        return mainWindow.windowScale
       else
-       return 1;
+        return 1;
     }
 
     Component.onCompleted:
@@ -172,7 +172,8 @@ KonvergoWindow
         dbg += "  DevicePixel ratio: " + Screen.devicePixelRatio + "\n";
         dbg += "  Web Max Height: " + (webHeightMax / Screen.devicePixelRatio) + "\n";
         dbg += "  Web scale: " + Math.round(webScale * 100) / 100 + "\n";
-        dbg += "  Zoom Factor: " + Math.round(web.zoomFactor * 100) / 100 + "\n";
+        dbg += "  Window scale:" + Math.round(windowScale * 100) / 100 + "\n";
+        dbg += "  Scale applied: " + Math.round(web.scale * 100) / 100 + " Zoom: " + Math.round(web.zoomFactor * 100) / 100 + "\n";
 
         return dbg;
       }

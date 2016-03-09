@@ -30,6 +30,7 @@ class KonvergoWindow : public QQuickWindow
   Q_PROPERTY(qreal webScale READ webScale NOTIFY webScaleChanged)
   Q_PROPERTY(qreal webHeightMax READ webHeightMax NOTIFY webScaleChanged)
   Q_PROPERTY(QSize webUISize READ webUISize NOTIFY webScaleChanged)
+  Q_PROPERTY(qreal windowScale READ windowScale NOTIFY webScaleChanged)
 
 public:
   static void RegisterClass();
@@ -62,10 +63,12 @@ public:
     emit reloadWebClient();
   }
 
-  qreal webScale() { return CalculateScale(size()); }
+  qreal windowScale() { return CalculateScale(size()); }
+  qreal webScale() { return CalculateWebScale(size()); }
   qreal webHeightMax() { return WEBUI_MAX_HEIGHT; }
   QSize webUISize() { return WEBUI_SIZE; }
   static qreal CalculateScale(const QSize& size);
+  static qreal CalculateWebScale(const QSize& size);
 
 Q_SIGNALS:
   void fullScreenSwitched();
