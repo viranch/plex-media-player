@@ -313,26 +313,12 @@ void KonvergoWindow::resizeEvent(QResizeEvent* event)
   QQuickWindow::resizeEvent(event);
 }
 
-// This controls how big the web view will zoom using semantic zoom
-// over a specific number of pixels and we run out of space for on screen
-// tiles in chromium. This only happens on OSX since on other platforms
-// we can use the GPU to transfer tiles directly but we set the limit on all platforms
-// to keep it consistent.
-//
-// See more discussion in: https://github.com/plexinc/plex-media-player/issues/10
-// The number of pixels here are REAL pixels, the code in webview.qml will compensate
-// for a higher DevicePixelRatio
-//
-#define WEBUI_MAX_HEIGHT 1440.0
-#define WEBUI_HEIGHT 720.0
-#define WEBUI_WIDTH 1280.0
-
 /////////////////////////////////////////////////////////////////////////////////////////
 qreal KonvergoWindow::CalculateScale(const QSize& size)
 {
-  qreal horizontalScale = size.width() / WEBUI_WIDTH;
-  qreal verticalScale = size.height() / WEBUI_HEIGHT;
+  qreal horizontalScale = (qreal)size.width() / (qreal)WEBUI_SIZE.width();
+  qreal verticalScale = (qreal)size.height() / (qreal)WEBUI_SIZE.height();
 
-  qreal minScale = qMin(horizontalScale, qMin(verticalScale, WEBUI_MAX_HEIGHT / WEBUI_HEIGHT));
+  qreal minScale = qMin(horizontalScale, qMin(verticalScale, (qreal)WEBUI_MAX_HEIGHT / (qreal)WEBUI_SIZE.height()));
   return qMax(1.0, minScale);
 }

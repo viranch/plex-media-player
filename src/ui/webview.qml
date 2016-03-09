@@ -50,35 +50,24 @@ KonvergoWindow
 
     width: Math.min((parent.height * 16) / 9, parent.width)
     height: Math.min((parent.width * 9) / 16, parent.height)
-
-    function getDesiredScale()
-    {
-      var verticalScale = height / 720;
-      var horizontalScale = width / 1280;
-
-      return Math.min(verticalScale, horizontalScale);
-    }
-
+    
     scale:
     {
-      var desiredScale = getDesiredScale();
-      var maximumScale = webMaxHeight ? ((webMaxHeight / Screen.devicePixelRatio) / 720) : 10;
+      var maximumScale = webHeightMax ? ((webHeightMax / Screen.devicePixelRatio) / 720) : 10;
 
-      if (desiredScale < maximumScale) {
+      if (webScale < maximumScale) {
         // Web renders at windows scale, no scaling
         return 1;
       } else {
         // Web should max out at maximum scaling
-        return desiredScale / maximumScale;
+        return webScale / maximumScale;
       }
     }
 
     zoomFactor:
     {
-      var desiredScale = getDesiredScale();
-
-      if (desiredScale < 1)
-        return desiredScale;
+      if (webScale < 1)
+        return webScale;
       else
        return 1;
     }
@@ -181,9 +170,8 @@ KonvergoWindow
         var dbg = mainWindow.debugInfo + "Window and web\n";
         dbg += "  Window size: " + parent.width + "x" + parent.height + "\n";
         dbg += "  DevicePixel ratio: " + Screen.devicePixelRatio + "\n";
-        dbg += "  Web Max Height: " + (webMaxHeight / Screen.devicePixelRatio) + "\n";
-        dbg += "  Web scale: " + Math.round(web.scale * 100) / 100 + "\n";
-        dbg += "  Desired Scale: " + Math.round(web.getDesiredScale() * 100) / 100 + "\n";
+        dbg += "  Web Max Height: " + (webHeightMax / Screen.devicePixelRatio) + "\n";
+        dbg += "  Web scale: " + Math.round(webScale * 100) / 100 + "\n";
         dbg += "  Zoom Factor: " + Math.round(web.zoomFactor * 100) / 100 + "\n";
 
         return dbg;
