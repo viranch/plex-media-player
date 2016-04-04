@@ -19,25 +19,28 @@ public:
   virtual const char* componentName() { return "system.network"; }
   virtual bool componentInitialize();
 
-  // technologies related functions
-  Q_INVOKABLE QStringList getTechnologies();
-  Q_INVOKABLE bool enableTechnology(QString technology, bool state);
-  Q_INVOKABLE bool isTechnologyEnabled(QString technology);
-
-  // services related functions
-  Q_INVOKABLE QStringList getServices(QString technology);
-  Q_INVOKABLE bool scan(QString technology);
-  Q_INVOKABLE bool connectService(QString technology, QString service);
-  Q_INVOKABLE bool isServiceConnected(QString technology, QString service);
-  Q_INVOKABLE bool setServiceConfig(QString technology, QString service, QVariantMap options);
-  Q_INVOKABLE QVariantMap getServiceConfig(QString technology, QString service);
-  Q_INVOKABLE bool disconnectService(QString technology, QString service);
-  Q_INVOKABLE void provideServicePassword(QString technology, QString service, QString password);
+  // Webclient API
+  Q_INVOKABLE bool hasWifi() { return getTechnologies().contains("wifi"); }
+  Q_INVOKABLE bool enableWifi() { return enableTechnology("wifi", true); }
+  Q_INVOKABLE bool disableWifi() { return enableTechnology("wifi", false); }
+  Q_INVOKABLE bool isWifiEnabled() { return isTechnologyEnabled("wifi"); }
+  Q_INVOKABLE bool connectWifi(QString network) { return connectService("wifi", network); }
+  Q_INVOKABLE void disconnectWifi(QString network) { disconnectService("wifi", network); }
+  Q_INVOKABLE void provideWifiPassword(QString network, QString password) { provideServicePassword("wifi", network, password); }
+  Q_INVOKABLE void scanWifi() { scan("wifi"); }
 
   // utilities functions
   Q_INVOKABLE void logInfo();
 
 Q_SIGNALS:
+  // Webclient events
+  void wifiEnableChanged();
+  void wifiScanCompleted();
+  void wifiConnectedChanged(QString network,  bool connected);
+  void wifiNetworkListChanged(QStringList networks);
+  void wifiPasswordRequired(QString network);
+
+  // Generic events
   void enableStateChanged(QString technology, bool enabled);
   void serviceListChanged(QString technology, QStringList services);
   void connectionStateChanged(QString technology, QString service, bool connected);
@@ -49,6 +52,21 @@ private:
 
   NetworkManager* m_networkManager;
   UserAgent* m_userAgent;
+
+  // technologies related functions
+  QStringList getTechnologies();
+  bool enableTechnology(QString technology, bool state);
+  bool isTechnologyEnabled(QString technology);
+
+  // services related functions
+  QStringList getServices(QString technology);
+  bool scan(QString technology);
+  bool connectService(QString technology, QString service);
+  bool isServiceConnected(QString technology, QString service);
+  bool setServiceConfig(QString technology, QString service, QVariantMap options);
+  QVariantMap getServiceConfig(QString technology, QString service);
+  bool disconnectService(QString technology, QString service);
+  void provideServicePassword(QString technology, QString service, QString password);
 
   NetworkService *getServiceForTechnology(QString technology, QString service);
   NetworkTechnology *getTechnologyForService(NetworkService *service);

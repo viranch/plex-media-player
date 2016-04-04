@@ -2,7 +2,7 @@
 #include "ConnmanComponent.h"
 
 /////////////////////////////////////////////////////////////////////////////////////////
-ConnmanComponent::ConnmanComponent(QObject* parent) : ComponentBase(parent), m_networkManager(NULL), m_userAgent(NULL)
+ConnmanComponent::ConnmanComponent(QObject* parent) : ComponentBase(parent), m_networkManager(nullptr), m_userAgent(nullptr)
 {
 }
 
@@ -295,6 +295,8 @@ void ConnmanComponent::technologyPoweredChanged(const bool &powered)
   {
     QLOG_DEBUG() << "Enable State changed for technology" << tech->name() << "( set to " << powered << ")";
     emit enableStateChanged(tech->name(), powered);
+    if (tech->name() =="wifi")
+      emit wifiEnableChanged();
   }
 }
 
@@ -324,6 +326,12 @@ void ConnmanComponent::technologyScanFinished()
     }
 
     emit serviceListChanged(tech->name(), services);
+
+    if (tech->name() == "wifi")
+    {
+      emit wifiScanCompleted();
+      emit wifiNetworkListChanged(getServices("wifi"));
+    }
   }
 }
 
@@ -338,6 +346,11 @@ void ConnmanComponent::serviceConnectedChanged(const bool &connected)
     {
       QLOG_DEBUG() << "Connection state changed for technology" << tech->name() << ", service" << serv->name() << "changed to " << connected;
       emit connectionStateChanged(tech->name(), serv->name(), connected);
+
+      if (tech->name() == "wifi")
+      {
+        emit wifiConnectedChanged(serv->name(), connected);
+      }
     }
   }
 }
@@ -368,7 +381,7 @@ NetworkService *ConnmanComponent::getServiceForTechnology(QString technology, QS
       return serv;
   }
 
-  return NULL;
+  return nullptr;
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////
@@ -382,7 +395,7 @@ NetworkTechnology *ConnmanComponent::getTechnologyForService(NetworkService *ser
       return tech;
   }
 
-  return NULL;
+  return nullptr;
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////
@@ -406,7 +419,7 @@ NetworkService *ConnmanComponent::getServiceFromPath(QString path)
       return serv;
   }
 
-  return NULL;
+  return nullptr;
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////
