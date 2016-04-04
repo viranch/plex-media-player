@@ -374,6 +374,12 @@
     ]
   },
   {
+  	"section": "wifi",
+  	"hidden": false,
+  	"values": [],
+  	"platforms": [ "oe_rpi" ]
+  },
+  {
     "section": "privacy",
     "hidden": false,
     "values": []
