@@ -16,7 +16,7 @@ class ConnmanComponent : public ComponentBase
 public:
 
   virtual bool componentExport() { return true; }
-  virtual const char* componentName() { return "system.network"; }
+  virtual const char* componentName() { return "network"; }
   virtual bool componentInitialize();
 
   // Webclient API
