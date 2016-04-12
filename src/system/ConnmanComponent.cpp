@@ -253,6 +253,9 @@ void ConnmanComponent::managerServiceListChanged()
   foreach(NetworkTechnology *tech,m_networkManager->getTechnologies())
   {
     emit serviceListChanged(tech->name(),getServices(tech->name()));
+
+    if (tech->name().toLower() == "wifi")
+        emit wifiNetworkListChanged(getServices("wifi"));
   }
 
   QVariantMap map;
@@ -273,7 +276,6 @@ void ConnmanComponent::agentUserInputRequested(const QString &servicePath, const
 
   QLOG_DEBUG() << "Requesting password for technology" << tech->name() << ", service" << service->name();
   emit requestServicePassword(tech->name(), service->name());
-
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////
@@ -295,7 +297,7 @@ void ConnmanComponent::technologyPoweredChanged(const bool &powered)
   {
     QLOG_DEBUG() << "Enable State changed for technology" << tech->name() << "( set to " << powered << ")";
     emit enableStateChanged(tech->name(), powered);
-    if (tech->name() =="wifi")
+    if (tech->name().toLower() == "wifi")
       emit wifiEnableChanged();
   }
 }
@@ -327,7 +329,7 @@ void ConnmanComponent::technologyScanFinished()
 
     emit serviceListChanged(tech->name(), services);
 
-    if (tech->name() == "wifi")
+    if (tech->name().toLower() == "wifi")
     {
       emit wifiScanCompleted();
       emit wifiNetworkListChanged(getServices("wifi"));
@@ -347,7 +349,7 @@ void ConnmanComponent::serviceConnectedChanged(const bool &connected)
       QLOG_DEBUG() << "Connection state changed for technology" << tech->name() << ", service" << serv->name() << "changed to " << connected;
       emit connectionStateChanged(tech->name(), serv->name(), connected);
 
-      if (tech->name() == "wifi")
+      if (tech->name().toLower() == "wifi")
       {
         emit wifiConnectedChanged(serv->name(), connected);
       }
