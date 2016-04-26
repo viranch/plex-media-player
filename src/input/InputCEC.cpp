@@ -4,11 +4,10 @@
 #include "settings/SettingsComponent.h"
 #include "power/PowerComponent.h"
 
-class KeyAction
+struct KeyAction
 {
-public:
-  QString m_action;
-  bool m_hasLongPress;
+  QString action;
+  bool hasLongPress;
 };
 
 static QMap<int, KeyAction> g_cecKeyMap   { \
@@ -184,9 +183,9 @@ void InputCECWorker::checkAdapter()
 }
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////
-void InputCECWorker::sendReceivedInput(const QString &source, const QString &keycode, bool pressDown)
+void InputCECWorker::sendReceivedInput(const QString &source, const QString &keycode, InputBase::InputkeyState keyState)
 {
-  emit receivedInput(source, keycode, pressDown);
+  emit receivedInput(source, keycode, keyState);
 }
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////
@@ -197,7 +196,7 @@ QString InputCECWorker::getCommandString(cec_user_control_code code)
   if (g_cecKeyMap.contains(code))
   {
     KeyAction keyaction = g_cecKeyMap[code];
-    key = keyaction.m_action;
+    key = keyaction.action;
   }
 
   return key;
@@ -270,8 +269,7 @@ int InputCECWorker::CecCommand(void *cbParam, const cec_command command)
   switch(command.opcode)
   {
     case CEC_OPCODE_PLAY:
-      cec->sendReceivedInput(CEC_INPUT_NAME, INPUT_KEY_PLAY);
-      cec->sendReceivedInput(CEC_INPUT_NAME, INPUT_KEY_PLAY, false);
+      cec->sendReceivedInput(CEC_INPUT_NAME, INPUT_KEY_PLAY, InputBase::KeyPressed);
       break;
 
     case CEC_OPCODE_DECK_CONTROL:
@@ -299,8 +297,7 @@ int InputCECWorker::CecCommand(void *cbParam, const cec_command command)
         {
           // We don't have up & down events for those special keys
           // so we just fake them
-          cec->sendReceivedInput(CEC_INPUT_NAME, keyCode);
-          cec->sendReceivedInput(CEC_INPUT_NAME, keyCode, false);
+          cec->sendReceivedInput(CEC_INPUT_NAME, keyCode, InputBase::KeyPressed);
         }
       }
       break;
@@ -325,7 +322,7 @@ int InputCECWorker::CecCommand(void *cbParam, const cec_command command)
         {
           // samsung Return key
           case CEC_USER_CONTROL_CODE_AN_RETURN:
-            cec->sendReceivedInput(CEC_INPUT_NAME, INPUT_KEY_BACK);
+            cec->sendReceivedInput(CEC_INPUT_NAME, INPUT_KEY_BACK, down ? InputBase::KeyDown : InputBase::KeyUp);
             return 1;
             break;
 
@@ -337,7 +334,7 @@ int InputCECWorker::CecCommand(void *cbParam, const cec_command command)
       cmdString = cec->getCommandString((cec_user_control_code)command.parameters[0]);
 
       if (!cmdString.isEmpty())
-        cec->sendReceivedInput(CEC_INPUT_NAME, cmdString, down);
+        cec->sendReceivedInput(CEC_INPUT_NAME, cmdString, down ? InputBase::KeyDown : InputBase::KeyUp);
     }
       break;
 
