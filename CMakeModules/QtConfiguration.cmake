@@ -22,13 +22,14 @@ if(NOT IS_DIRECTORY ${QTROOT})
     ")
   file(WRITE ${QTROOT}/bin/qt.conf ${QTCONFCONTENT})
 endif()
+
+message(STATUS "Qt root directory: ${QTROOT}")
+
 list(APPEND CMAKE_FIND_ROOT_PATH ${QTROOT})
 list(APPEND CMAKE_PREFIX_PATH ${QTROOT})
 include_directories(${QTROOT}/include)
 
 set(REQUIRED_QT_VERSION "5.6.0")
-
-message(STATUS ${QTROOT})
 
 set(QTCONFIGROOT ${QTROOT}/lib/cmake/Qt5)
 set(components Core Network WebChannel Qml Quick Xml WebEngine Widgets)
