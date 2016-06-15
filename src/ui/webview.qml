@@ -12,16 +12,6 @@ KonvergoWindow
   minimumHeight: windowMinSize.height
   minimumWidth: windowMinSize.width
 
-  function getInitialScaleArg()
-  {
-    return "?initialScale=" + webScale
-  }
-
-  function maxWebScale()
-  {
-    return webHeightMax ? ((webHeightMax / Screen.devicePixelRatio) / 720) : 10;
-  }
-
   MpvVideo
   {
     id: video
@@ -36,25 +26,11 @@ KonvergoWindow
   {
     id: web
     objectName: "web"
-    anchors.centerIn: parent
     settings.errorPageEnabled: false
     settings.localContentCanAccessRemoteUrls: true
     profile.httpUserAgent: components.system.getUserAgent()
-    transformOrigin: Item.TopLeft
-
-    width: Math.round(Math.min((parent.height * 16) / 9, parent.width))
-    height: Math.round(Math.min((parent.width * 9) / 16, parent.height))
-    
-    scale:
-    {
-      if (mainWindow.windowScale < mainWindow.maxWebScale()) {
-        // Web renders at windows scale, no scaling
-        return 1;
-      } else {
-        // Web should max out at maximum scaling
-        return mainWindow.windowScale / mainWindow.maxWebScale();
-      }
-    }
+    width: parent.width
+    height: parent.height
 
     Component.onCompleted:
     {
@@ -63,7 +39,7 @@ KonvergoWindow
       backgroundColor : "#111111"
       forceActiveFocus()
       mainWindow.reloadWebClient.connect(reload)
-      url = components.settings.value("path", "startupurl") + getInitialScaleArg();
+      url = components.settings.value("path", "startupurl");
     }
 
     onLoadingChanged:
@@ -155,9 +131,6 @@ KonvergoWindow
         var dbg = mainWindow.debugInfo + "Window and web\n";
         dbg += "  Window size: " + parent.width + "x" + parent.height + " - " + web.width + "x" + web.height + "\n";
         dbg += "  DevicePixel ratio: " + Screen.devicePixelRatio + "\n";
-        dbg += "  Web Max Height: " + (webHeightMax / Screen.devicePixelRatio) + " / Max scale: " + mainWindow.maxWebScale() + "\n";
-        dbg += "  Web scale: " + webScale + " / Window scale: " + windowScale + "\n";
-        dbg += "  Scale applied: " + web.scale + "\n";
 
         return dbg;
       }
