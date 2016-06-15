@@ -55,10 +55,6 @@ bool EventFilter::eventFilter(QObject* watched, QEvent* event)
   {
     system.setCursorVisibility(true);
   }
-  else if (event->type() == QEvent::Wheel)
-  {
-    return true;
-  }
   else if (event->type() == QEvent::MouseButtonPress)
   {
     // ignore right clicks that would show context menu
